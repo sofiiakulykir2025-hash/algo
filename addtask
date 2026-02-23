@@ -1,0 +1,29 @@
+from lab1 import is_monotonic
+
+def check_pressure(p, mode):
+    if len(p) < 2:
+        return "OK", -1
+    
+    for i in range(len(p) - 1):
+        if mode == 'startup' and p[i] > p[i + 1]:
+            return "ALARM", i + 1
+        if mode == 'shutdown' and p[i] < p[i + 1]:
+            return "ALARM", i + 1
+    
+    return "OK", -1
+
+
+
+print("1 - запуск (тиск не падає)")
+print("2 - скидання (тиск не росте)")
+
+mode = 'startup' if input("1 чи 2? ") == '1' else 'shutdown'
+
+nums = input("Тиск через пробіл: ").split()
+p = [float(x) for x in nums]
+
+result, idx = check_pressure(p, mode)
+if result == "OK":
+    print(" OK")
+else:
+    print(f" ALARM на індексі {idx} (елемент {p[idx]})")
