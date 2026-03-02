@@ -1,1 +1,28 @@
+def can_fit(L, N, W, H):
+    return (L // W) * (L // H) >= N
 
+def min_square_size(N, W, H):
+    iterations = 0
+    
+    right = max(W, H) * N
+    left = max(W, H) 
+    
+    while left < right:
+        mid = (left + right) // 2
+        iterations += 1
+
+        if can_fit(mid, N, W, H):
+            right = mid
+        else:
+            left = mid + 1
+
+    return left, iterations
+
+
+N = int(input("Введіть кількість листків N: "))
+W = int(input("Введіть ширину листка W: "))
+H = int(input("Введіть висоту листка H: "))
+
+result, iterations = min_square_size(N, W, H)
+print("Мінімальна довжина сторони квадратної дошки:", result)
+print("Кількість ітерацій:", iterations)
