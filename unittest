@@ -1,0 +1,13 @@
+import unittest
+from lab2 import can_fit, min_square_size
+
+
+class TestMinSquareSize(unittest.TestCase):
+
+    def test_one_sheet(self):
+        result, _ = min_square_size(2, 1000000000, 999999999)
+        self.assertTrue(result == 1999999998)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
