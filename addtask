@@ -1,1 +1,94 @@
+class BinaryTree:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
 
+    
+    def insert(self, value):
+        if value < self.value:
+            if self.left is None:
+                self.left = BinaryTree(value)
+            else:
+                self.left.insert(value)
+        else:
+            if self.right is None:
+                self.right = BinaryTree(value)
+            else:
+                self.right.insert(value)
+
+   
+    def __height(self, node):
+        if node is None:
+            return 0
+        return 1 + max(self.__height(node.left), self.__height(node.right))
+
+   
+    def in_order(self, node):
+        if node is None:
+            return []
+        return self.in_order(node.left) + [node.value] + self.in_order(node.right)
+
+    
+    def collect(self, node, row, col, gap, positions):
+        if node is None:
+            return
+
+        positions.append((row, col, str(node.value)))
+
+        if node.left:
+            positions.append((row + 1, col - 1, "\\"))
+            self.collect(node.left, row + 2, col - gap, max(gap // 2, 2), positions)
+
+        if node.right:
+            positions.append((row + 1, col + 1, "/"))
+            self.collect(node.right, row + 2, col + gap, max(gap // 2, 2), positions)
+
+    
+    def print_inverted_tree(self, node):
+        positions = []
+        self.collect(node, 0, 40, 8, positions)
+
+        rows = max(r for r, c, v in positions) + 1
+        cols = max(c for r, c, v in positions) + 5
+
+        grid = [[" "] * cols for _ in range(rows)]
+
+        for r, c, val in positions:
+            for i, ch in enumerate(val):
+                grid[r][c + i] = ch
+
+        for row in reversed(grid):
+            print("".join(row).rstrip())
+
+   
+    def is_balanced(self, node):
+        if node is None:
+            return True
+        diff = abs(self.__height(node.left) - self.__height(node.right))
+        return diff <= 1 and self.is_balanced(node.left) and self.is_balanced(node.right)
+
+
+
+numbers = [42, 23, 48, 19, 21, 17, 20, 15, 43, 49, 50]
+
+
+root = BinaryTree(numbers[0])
+for num in numbers[1:]:
+    root.insert(num)
+
+
+print("=== In-order обхід ===")
+result = root.in_order(root)
+print(result)
+
+with open("inorder.txt", "w") as file:
+    for n in result:
+        file.write(str(n) + "\n")
+
+
+print("\n=== Перевернуте дерево ===")
+root.print_inverted_tree(root)
+
+print("\n=== Чи збалансоване? ===")
+print(root.is_balanced(root))
