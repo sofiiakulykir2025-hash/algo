@@ -21,7 +21,14 @@ class BinaryTree:
     def __height(self, node):
         if node is None:
             return 0
-        return 1 + max(self.__height(node.left), self.__height(node.right))
+
+        left_height = self.__height(node.left)
+        right_height = self.__height(node.right)
+
+        if left_height > right_height:
+            return 1 + left_height
+        else:
+            return 1 + right_height
 
    
     def in_order(self, node):
@@ -49,27 +56,53 @@ class BinaryTree:
         positions = []
         self.collect(node, 0, 40, 8, positions)
 
-        rows = max(r for r, c, v in positions) + 1
-        cols = max(c for r, c, v in positions) + 5
+        rows = 0
+        cols = 0
+
+        for r, c, v in positions:
+            if r > rows:
+                rows = r
+            if c > cols:
+                cols = c
+
+        rows = rows + 1
+        cols = cols + 5
 
         grid = [[" "] * cols for _ in range(rows)]
 
         for r, c, val in positions:
-            for i, ch in enumerate(val):
+            i = 0
+            for ch in val:
                 grid[r][c + i] = ch
+                i += 1
 
         for row in reversed(grid):
-            print("".join(row).rstrip())
-
-   
+            print("".join(row).rstrip())  
+    
     def is_balanced(self, node):
         if node is None:
-            return True
-        diff = abs(self.__height(node.left) - self.__height(node.right))
-        return diff <= 1 and self.is_balanced(node.left) and self.is_balanced(node.right)
+             return True
 
+        left_height = self.__height(node.left)
+        right_height = self.__height(node.right)
 
+        if left_height > right_height:
+           diff = left_height - right_height
+        else:
+           diff = right_height - left_height
 
+        if diff > 1:
+           return False
+
+        if not self.is_balanced(node.left):
+            return False
+
+        if not self.is_balanced(node.right):
+            return False
+
+        return True
+    
+    
 numbers = [42, 23, 48, 19, 21, 17, 20, 15, 43, 49, 50]
 
 
