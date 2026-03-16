@@ -43,13 +43,17 @@ class BinaryTree:
 
         positions.append((row, col, str(node.value)))
 
+        new_gap = gap // 2
+        if new_gap < 2:
+            new_gap = 2
+
         if node.left:
-            positions.append((row + 1, col - 1, "\\"))
-            self.collect(node.left, row + 2, col - gap, max(gap // 2, 2), positions)
+            positions.append((row + 1, col - gap // 2, "\\"))
+            self.collect(node.left, row + 2, col - gap, new_gap, positions)
 
         if node.right:
-            positions.append((row + 1, col + 1, "/"))
-            self.collect(node.right, row + 2, col + gap, max(gap // 2, 2), positions)
+            positions.append((row + 1, col + gap // 2, "/"))
+            self.collect(node.right, row + 2, col + gap, new_gap, positions)
 
     
     def print_inverted_tree(self, node):
