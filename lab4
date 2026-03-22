@@ -1,0 +1,181 @@
+class Node:
+    def __init__(self, value, priority):
+        self.value = value
+        self.priority = priority
+        self.left = None
+        self.right = None
+        self.height = 1
+
+
+class PriorityQueue:
+
+    def __init__(self):
+        self.root = None
+
+
+    def h(self, n):
+        if n:
+            return n.height
+        return 0
+
+
+    def balance(self, n):
+        return self.h(n.left) - self.h(n.right)
+
+
+    def rotate_right(self, y):
+        x = y.left
+        y.left = x.right
+        x.right = y
+
+        hl = self.h(y.left)
+        hr = self.h(y.right)
+        if hl > hr:
+            y.height = hl + 1
+        else:
+            y.height = hr + 1
+
+        hl = self.h(x.left)
+        hr = self.h(x.right)
+        if hl > hr:
+            x.height = hl + 1
+        else:
+            x.height = hr + 1
+
+        return x
+
+
+    def rotate_left(self, x):
+        y = x.right
+        x.right = y.left
+        y.left = x
+
+        hl = self.h(x.left)
+        hr = self.h(x.right)
+        if hl > hr:
+            x.height = hl + 1
+        else:
+            x.height = hr + 1
+
+        hl = self.h(y.left)
+        hr = self.h(y.right)
+        if hl > hr:
+            y.height = hl + 1
+        else:
+            y.height = hr + 1
+
+        return y
+
+
+    def insert(self, node, value, priority):
+
+        if node is None:
+            return Node(value, priority)
+
+        if priority < node.priority:
+            node.left = self.insert(node.left, value, priority)
+        else:
+            node.right = self.insert(node.right, value, priority)
+
+        hl = self.h(node.left)
+        hr = self.h(node.right)
+        if hl > hr:
+            node.height = hl + 1
+        else:
+            node.height = hr + 1
+
+        b = self.balance(node)
+
+        if b > 1:
+            return self.rotate_right(node)
+
+        if b < -1:
+            return self.rotate_left(node)
+
+        return node
+
+
+    def push(self, value, priority):
+        self.root = self.insert(self.root, value, priority)
+
+
+    def min_node(self, node):
+        while node.left:
+            node = node.left
+        return node
+
+
+    def delete(self, node, priority):
+
+        if node is None:
+            return node
+
+        if priority < node.priority:
+            node.left = self.delete(node.left, priority)
+
+        elif priority > node.priority:
+            node.right = self.delete(node.right, priority)
+
+        else:
+
+            if node.left is None:
+                return node.right
+
+            if node.right is None:
+                return node.left
+
+            t = self.min_node(node.right)
+
+            node.value = t.value
+            node.priority = t.priority
+
+            node.right = self.delete(node.right, t.priority)
+
+        hl = self.h(node.left)
+        hr = self.h(node.right)
+        if hl > hr:
+            node.height = hl + 1
+        else:
+            node.height = hr + 1
+
+        return node
+
+
+    def pop(self):
+        if self.root is None:
+            return None
+
+        m = self.min_node(self.root)
+        value = m.value
+
+        self.root = self.delete(self.root, m.priority)
+
+        return value
+
+
+    def show(self, node):
+        if node:
+            self.show(node.left)
+            print(node.value, node.priority)
+            self.show(node.right)
+
+
+    def view(self):
+        self.show(self.root)
+
+
+
+q = PriorityQueue()
+
+q.push("A", 3)
+q.push("B", 1)
+q.push("C", 5)
+q.push("D", 2)
+
+print("Черга:")
+q.view()
+
+print("Видалили:", q.pop())
+
+print("Після видалення:")
+q.view()
