@@ -1,1 +1,57 @@
+import unittest
 
+from lab4 import  PriorityQueue ,  Node
+
+class TestPriorityQueue(unittest.TestCase):
+
+    def setUp(self):
+        """Створюємо новий екземпляр черги перед кожним тестом"""
+        self.pq = PriorityQueue()
+
+    def test_push_and_min_node(self):
+        """Перевірка, чи правильно визначається мінімальний елемент"""
+        self.pq.push("Low", 10)
+        self.pq.push("High", 1)
+        self.pq.push("Medium", 5)
+        
+        
+        min_node = self.pq.min_node(self.pq.root)
+        self.assertEqual(min_node.value, "High")
+        self.assertEqual(min_node.priority, 1)
+
+    def test_pop_priority(self):
+        """Перевірка, що pop повертає елементи в порядку пріоритету"""
+        self.pq.push("Task A", 3)
+        self.pq.push("Task B", 1)
+        self.pq.push("Task C", 2)
+
+        self.assertEqual(self.pq.pop(), "Task B") 
+        self.assertEqual(self.pq.pop(), "Task C")
+        self.assertEqual(self.pq.pop(), "Task A") 
+
+    def test_empty_pop(self):
+        """Перевірка виклику pop для порожньої черги"""
+        self.assertIsNone(self.pq.pop())
+
+    def test_avl_balancing(self):
+        """Перевірка балансування висоти (AVL властивість)"""
+       
+        self.pq.push("1", 1)
+        self.pq.push("2", 2)
+        self.pq.push("3", 3)
+        
+    
+        self.assertEqual(self.pq.root.priority, 2)
+        self.assertLessEqual(self.pq.root.height, 2)
+
+    def test_delete_specific(self):
+        """Перевірка внутрішнього методу видалення за пріоритетом"""
+        self.pq.push("A", 10)
+        self.pq.push("B", 20)
+        self.pq.root = self.pq.delete(self.pq.root, 10)
+        
+        self.assertEqual(self.pq.root.value, "B")
+        self.assertIsNone(self.pq.root.left)
+
+if __name__ == '__main__':
+    unittest.main()
