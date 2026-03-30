@@ -1,0 +1,76 @@
+from collections import defaultdict, deque
+
+def solve_tribes_wedding():
+    """
+    Функція для розрахунку можливих шлюбів між племенами.
+    """
+    try:
+        n_str = input("Скільки всього буде зв'язків (N)? ")
+        n = int(n_str)
+    except ValueError:
+        return "Помилка: потрібно ввести ціле число для кількості зв'язків!"
+
+    graph = defaultdict(list)
+    people = set()
+
+    print(f"Введіть {n} пар людей (наприклад: 1 2). Кожну пару з нового рядка:")
+
+    
+    count = 0
+    while count < n:
+        line = input(f"Зв'язок {count + 1}: ")
+        parts = line.split()
+        
+        if len(parts) != 2:
+            print("Помилка! Введіть рівно ДВА числа через пробіл.")
+            continue
+        
+        try:
+            a, b = map(int, parts)
+            graph[a].append(b)
+            graph[b].append(a)
+            people.add(a)
+            people.add(b)
+            count += 1
+        except ValueError:
+            print("Помилка! Використовуйте лише цифри.")
+
+    
+    visited = set()
+    tribes = []
+
+    for person in people:
+        if person not in visited:
+            queue = deque([person])
+            visited.add(person)
+            boys, girls = 0, 0
+
+            while queue:
+                cur = queue.popleft()
+                
+                if cur % 2 == 1:
+                    boys += 1
+                else:
+                    girls += 1
+
+                for neighbor in graph[cur]:
+                    if neighbor not in visited:
+                        visited.add(neighbor)
+                        queue.append(neighbor)
+            
+            tribes.append((boys, girls))
+
+    
+    total_girls = sum(t[1] for t in tribes)
+    total_pairs = 0
+    
+    for b, g in tribes:
+        
+        total_pairs += b * (total_girls - g)
+
+    return total_pairs
+
+if __name__ == "__main__":
+    result = solve_tribes_wedding()
+    print("\n--- Результат ---")
+    print(f"Кількість можливих пар між племенами: {result}")
