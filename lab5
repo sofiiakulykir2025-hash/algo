@@ -1,76 +1,72 @@
-from collections import defaultdict, deque
+import os
 
-def solve_tribes_wedding():
-    """
-    Функція для розрахунку можливих шлюбів між племенами.
-    """
-    try:
-        n_str = input("Скільки всього буде зв'язків (N)? ")
-        n = int(n_str)
-    except ValueError:
-        return "Помилка: потрібно ввести ціле число для кількості зв'язків!"
 
-    graph = defaultdict(list)
-    people = set()
+folder = os.path.dirname(__file__)
+input_path = os.path.join(folder, 'input.txt')
+output_path = os.path.join(folder, 'output.txt')
 
-    print(f"Введіть {n} пар людей (наприклад: 1 2). Кожну пару з нового рядка:")
 
+f = open(input_path, 'r', encoding='utf-8')
+lines = f.readlines()
+f.close()
+
+
+n = int(lines[0].split('#')[0].strip())
+
+
+start_data = lines[1].split('#')[0].replace(',', ' ').split()
+start_x = int(start_data[0])
+start_y = int(start_data[1])
+
+
+target_data = lines[2].split('#')[0].replace(',', ' ').split()
+target_x = int(target_data[0])
+target_y = int(target_data[1])
+
+
+row = [2, 2, -2, -2, 1, 1, -1, -1]
+col = [-1, 1, 1, -1, 2, -2, 2, -2]
+
+queue = [[start_x, start_y, 0]]
+visited = [[start_x, start_y]] 
+
+final_result = -1
+
+
+index = 0
+while index < len(queue):
+    curr = queue[index]
+    index += 1
     
-    count = 0
-    while count < n:
-        line = input(f"Зв'язок {count + 1}: ")
-        parts = line.split()
-        
-        if len(parts) != 2:
-            print("Помилка! Введіть рівно ДВА числа через пробіл.")
-            continue
-        
-        try:
-            a, b = map(int, parts)
-            graph[a].append(b)
-            graph[b].append(a)
-            people.add(a)
-            people.add(b)
-            count += 1
-        except ValueError:
-            print("Помилка! Використовуйте лише цифри.")
+    x = curr[0]
+    y = curr[1]
+    dist = curr[2]
 
-    
-    visited = set()
-    tribes = []
 
-    for person in people:
-        if person not in visited:
-            queue = deque([person])
-            visited.add(person)
-            boys, girls = 0, 0
+    if x == target_x and y == target_y:
+        final_result = dist
+        break
 
-            while queue:
-                cur = queue.popleft()
-                
-                if cur % 2 == 1:
-                    boys += 1
-                else:
-                    girls += 1
+ 
+    for i in range(8):
+        next_x = x + row[i]
+        next_y = y + col[i]
 
-                for neighbor in graph[cur]:
-                    if neighbor not in visited:
-                        visited.add(neighbor)
-                        queue.append(neighbor)
+        if 0 <= next_x < n and 0 <= next_y < n:
             
-            tribes.append((boys, girls))
+            already_here = False
+            for v in visited:
+                if v[0] == next_x and v[1] == next_y:
+                    already_here = True
+                    break
+            if not already_here:
+                visited.append([next_x, next_y])
+                queue.append([next_x, next_y, dist + 1])
 
-    
-    total_girls = sum(t[1] for t in tribes)
-    total_pairs = 0
-    
-    for b, g in tribes:
-        
-        total_pairs += b * (total_girls - g)
 
-    return total_pairs
+out_f = open(output_path, 'w', encoding='utf-8')
+out_f.write(str(final_result))
+out_f.close()
 
-if __name__ == "__main__":
-    result = solve_tribes_wedding()
-    print("\n--- Результат ---")
-    print(f"Кількість можливих пар між племенами: {result}")
+print(f"Розрахунок завершено! Мінімальна кількість ходів: {final_result}")
+print("Результат збережено в output.txt")
