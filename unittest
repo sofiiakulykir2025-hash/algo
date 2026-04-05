@@ -1,33 +1,28 @@
 import unittest
-from unittest.mock import patch
-from lab5 import solve_tribes_wedding 
+from laba5 import  knight_bfs 
 
-class TestWedding(unittest.TestCase):
 
-    @patch('builtins.input')
-    def test_example_1(self, mock_input):
-        mock_input.side_effect = ["3", "1 2", "2 4", "3 5"]
-        self.assertEqual(solve_tribes_wedding(), 4)
+class TestKnightPath(unittest.TestCase):
 
-    @patch('builtins.input')
-    def test_example_2(self, mock_input): 
-        mock_input.side_effect = ["5", "1 2", "2 4", "1 3", "3 5", "8 10"]
-        self.assertEqual(solve_tribes_wedding(), 6)
+    def test_standard_case(self):
+        """Перевірка прикладу з завдання (8x8, 7,0 -> 0,7)"""
+        res = knight_bfs(8, 7, 0, 0, 7)
+        self.assertEqual(res, 6)
 
-    @patch('builtins.input')
-    def test_all_in_one_tribe(self, mock_input):
-        mock_input.side_effect = ["2", "1 2", "2 3"]
-        self.assertEqual(solve_tribes_wedding(), 0)
+    def test_one_move(self):
+        """Перевірка одного прямого ходу"""
+        res = knight_bfs(8, 0, 0, 2, 1)
+        self.assertEqual(res, 1)
 
-    @patch('builtins.input')
-    def test_only_girls(self, mock_input):
-        mock_input.side_effect = ["2", "2 4", "6 8"]
-        self.assertEqual(solve_tribes_wedding(), 0)
+    def test_same_position(self):
+        """Перевірка, якщо кінь нікуди не йде"""
+        res = knight_bfs(8, 4, 4, 4, 4)
+        self.assertEqual(res, 0)
 
-    @patch('builtins.input')
-    def test_two_separate_tribes(self, mock_input):
-        mock_input.side_effect = ["2", "1 2", "3 4"]
-        self.assertEqual(solve_tribes_wedding(), 2)
+    def test_unreachable(self):
+        """Перевірка неможливого шляху на дуже маленькій дошці 2x2"""
+        res = knight_bfs(2, 0, 0, 1, 1)
+        self.assertEqual(res, -1)
 
 if __name__ == '__main__':
-    unittest.main(verbosity=2)
+    unittest.main()
