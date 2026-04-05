@@ -1,72 +1,67 @@
 import os
 
 
-folder = os.path.dirname(__file__)
-input_path = os.path.join(folder, 'input.txt')
-output_path = os.path.join(folder, 'output.txt')
-
-
-f = open(input_path, 'r', encoding='utf-8')
-lines = f.readlines()
-f.close()
-
-
-n = int(lines[0].split('#')[0].strip())
-
-
-start_data = lines[1].split('#')[0].replace(',', ' ').split()
-start_x = int(start_data[0])
-start_y = int(start_data[1])
-
-
-target_data = lines[2].split('#')[0].replace(',', ' ').split()
-target_x = int(target_data[0])
-target_y = int(target_data[1])
-
-
-row = [2, 2, -2, -2, 1, 1, -1, -1]
-col = [-1, 1, 1, -1, 2, -2, 2, -2]
-
-queue = [[start_x, start_y, 0]]
-visited = [[start_x, start_y]] 
-
-final_result = -1
-
-
-index = 0
-while index < len(queue):
-    curr = queue[index]
-    index += 1
+def knight_bfs(n, start_x, start_y, target_x, target_y):
     
-    x = curr[0]
-    y = curr[1]
-    dist = curr[2]
+    row = [2, 2, -2, -2, 1, 1, -1, -1]
+    col = [-1, 1, 1, -1, 2, -2, 2, -2]
 
+    
+    queue = [[start_x, start_y, 0]]
+    
+    visited = [[start_x, start_y]]
 
-    if x == target_x and y == target_y:
-        final_result = dist
-        break
+    index = 0
+    while index < len(queue):
+        x, y, dist = queue[index]
+        index += 1
 
- 
-    for i in range(8):
-        next_x = x + row[i]
-        next_y = y + col[i]
+        
+        if x == target_x and y == target_y:
+            return dist
 
-        if 0 <= next_x < n and 0 <= next_y < n:
+        
+        for i in range(8):
+            nx, ny = x + row[i], y + col[i]
+
             
-            already_here = False
-            for v in visited:
-                if v[0] == next_x and v[1] == next_y:
-                    already_here = True
-                    break
-            if not already_here:
-                visited.append([next_x, next_y])
-                queue.append([next_x, next_y, dist + 1])
+            if 0 <= nx < n and 0 <= ny < n:
+                
+                already_visited = False
+                for v in visited:
+                    if v[0] == nx and v[1] == ny:
+                        already_visited = True
+                        break
+                
+                if not already_visited:
+                    visited.append([nx, ny])
+                    queue.append([nx, ny, dist + 1])
+    return -1
 
 
-out_f = open(output_path, 'w', encoding='utf-8')
-out_f.write(str(final_result))
-out_f.close()
+if __name__ == "__main__":
+    folder = os.path.dirname(__file__)
+    input_path = os.path.join(folder, 'input.txt')
+    output_path = os.path.join(folder, 'output.txt')
 
-print(f"Розрахунок завершено! Мінімальна кількість ходів: {final_result}")
-print("Результат збережено в output.txt")
+    if os.path.exists(input_path):
+        f = open(input_path, 'r', encoding='utf-8')
+        lines = f.readlines()
+        f.close()
+
+    
+        n = int(lines[0].split('#')[0].strip())
+        s_data = lines[1].split('#')[0].replace(',', ' ').split()
+        t_data = lines[2].split('#')[0].replace(',', ' ').split()
+        
+        sx, sy = int(s_data[0]), int(s_data[1])
+        tx, ty = int(t_data[0]), int(t_data[1])
+
+        
+        result = knight_bfs(n, sx, sy, tx, ty)
+
+        
+        out_f = open(output_path, 'w', encoding='utf-8')
+        out_f.write(str(result))
+        out_f.close()
+        print(f"Готово! Результат {result} у файлі output.txt")
