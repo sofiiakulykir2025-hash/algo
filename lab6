@@ -1,0 +1,59 @@
+while True:
+    try:
+        print("Введіть кількість працівників (N) та видів пива (B) через пробіл:")
+        line1 = input("-> ").split()
+        if len(line1) < 2:
+            print("Потрібно ввести два числа!")
+            continue
+        n = int(line1[0])
+        b = int(line1[1])
+        break
+    except ValueError:
+        print("Будь ласка, введіть цілі числа.")
+
+required_len = n * b
+data = ""
+while len(data) < required_len:
+    print(f"Введіть вподобання (зараз введено {len(data)} з {required_len} літер Y/N):")
+    new_input = input("-> ").replace(" ", "").upper()
+    data += new_input
+    if len(data) < required_len:
+        print(f"Ще бракує {required_len - len(data)} літер.")
+
+
+worker_likes = []
+for i in range(n):
+    likes = []
+    for j in range(b):
+      
+        if data[i * b + j] == 'Y':
+            likes.append(j)
+    worker_likes.append(likes)
+
+
+
+for i in range(1, 2**b):
+    chosen_beers = []
+    for j in range(b):
+        if (i >> j) & 1:
+            chosen_beers.append(j)
+    
+    if len(chosen_beers) >= min_beers:
+        continue
+        
+    all_happy = True
+    for likes in worker_likes:
+        found = False
+        for beer in likes:
+            if beer in chosen_beers:
+                found = True
+                break
+        if not found:
+            all_happy = False
+            break
+            
+    if all_happy:
+        min_beers = len(chosen_beers)
+
+print("-" * 30)
+print(f"Мінімальна кількість видів пива: {min_beers}")
