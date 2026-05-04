@@ -1,0 +1,65 @@
+import os
+
+def solve():
+   
+    folder = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(folder, "data.txt")
+
+    
+    if not os.path.exists(file_path):
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write("K1 K2 2000\n")
+            f.write("K2 K3 500\n")
+            f.write("K1 K3 2100\n")
+
+   
+    edges = []
+    wells = set()
+    
+    with open(file_path, "r", encoding="utf-8") as f:
+        for line in f:
+            parts = line.split()
+            if len(parts) == 3:
+                u, v, dist = parts[0], parts[1], int(parts[2])
+                edges.append((dist, u, v))
+                wells.add(u)
+                wells.add(v)
+
+    if not wells:
+        return 0
+
+    
+    edges.sort()
+    parent = {well: well for well in wells}
+
+    def find(i):
+        if parent[i] == i:
+            return i
+        parent[i] = find(parent[i])
+        return parent[i]
+
+    def union(i, j):
+        root_i = find(i)
+        root_j = find(j)
+        if root_i != root_j:
+            parent[root_i] = root_j
+            return True
+        return False
+
+    total_length = 0
+    edges_count = 0
+
+    for dist, u, v in edges:
+        if union(u, v):
+            total_length += dist
+            edges_count += 1
+
+    if edges_count == len(wells) - 1:
+        return total_length
+    else:
+        return -1
+
+
+if __name__ == "__main__":
+    result = solve()
+    print(f"\nРезультат: {result}")
