@@ -1,37 +1,36 @@
 import math
 
+def calculate_max_wire(w, heights):
+    n = len(heights)
+    if n == 0:
+        return 0.0
 
-w = int(input("Відстань: "))
-heights = list(map(int, input("Висоти через пробіл: ").split()))
-n = len(heights)
+    dp_low = [0.0] * n
+    dp_high = [0.0] * n
 
+    for i in range(1, n):
 
-dp_low = [0.0] * n
-dp_high = [0.0] * n
+        opt1 = dp_low[i-1] + math.sqrt(w**2 + (1 - 1)**2)
+        opt2 = dp_high[i-1] + math.sqrt(w**2 + (heights[i-1] - 1)**2)
+        if opt1 > opt2:
+            dp_low[i] = opt1
+        else:
+            dp_low[i] = opt2
 
-for i in range(1, n):
-   
-    option1 = dp_low[i-1] + math.sqrt(w**2 + (1 - 1)**2)
-   
-    option2 = dp_high[i-1] + math.sqrt(w**2 + (heights[i-1] - 1)**2)
-    
-    if option1 > option2:
-        dp_low[i] = option1
+        
+        opt3 = dp_low[i-1] + math.sqrt(w**2 + (1 - heights[i])**2)
+        opt4 = dp_high[i-1] + math.sqrt(w**2 + (heights[i-1] - heights[i])**2)
+        if opt3 > opt4:
+            dp_high[i] = opt3
+        else:
+            dp_high[i] = opt4
+
+    if dp_low[n-1] > dp_high[n-1]:
+        return dp_low[n-1]
     else:
-        dp_low[i] = option2
+        return dp_high[n-1]
 
-    
-    option3 = dp_low[i-1] + math.sqrt(w**2 + (1 - heights[i])**2)
-    
-    option4 = dp_high[i-1] + math.sqrt(w**2 + (heights[i-1] - heights[i])**2)
-    
-    if option3 > option4:
-        dp_high[i] = option3
-    else:
-        dp_high[i] = option4
-
-
-if dp_low[n-1] > dp_high[n-1]:
-    print(round(dp_low[n-1], 2))
-else:
-    print(round(dp_high[n-1], 2))
+if __name__ == "__main__":
+    w = int(input("w: "))
+    h = list(map(int, input("heights: ").split()))
+    print(f"{calculate_max_wire(w, h):.2f}")
