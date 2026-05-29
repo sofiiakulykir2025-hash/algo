@@ -1,0 +1,34 @@
+import unittest
+
+from beer_finder import BeerOptimizer
+
+class TestBeerOptimizer(unittest.TestCase):
+
+    def test_standard_case(self):
+        """2 працівники, 2 види пива. Смаки: YY та NY.
+        Достатньо 1 виду пива (індекс 1)."""
+        optimizer = BeerOptimizer(2, 2, "YYNY")
+        self.assertEqual(optimizer.find_min_beers(), 1)
+
+    def test_everyone_likes_one_shared_beer(self):
+        """3 працівники, 3 види пива. Усі люблять пиво з індексом 1 (YNN, NYN, YYN)."""
+        optimizer = BeerOptimizer(3, 3, "YNNNYNYYN")
+        self.assertEqual(optimizer.find_min_beers(), 1)
+
+    def test_all_yes(self):
+        """Усі люблять усе. Достатньо будь-якого 1 виду пива."""
+        optimizer = BeerOptimizer(2, 3, "YYYYYY")
+        self.assertEqual(optimizer.find_min_beers(), 1)
+
+    def test_no_solution(self):
+        """Один із працівників не любить нічого (NNN). Рішення немає (None)."""
+        optimizer = BeerOptimizer(2, 3, "YYYNNN")
+        self.assertIsNone(optimizer.find_min_beers())
+
+    def test_case_insensitive_and_trim(self):
+        """Перевірка ігнорування регістру (y/n) та відсікання зайвих літер."""
+        optimizer = BeerOptimizer(2, 2, "yynyXXXXXX")
+        self.assertEqual(optimizer.find_min_beers(), 1)
+
+if __name__ == "__main__":
+    unittest.main()
