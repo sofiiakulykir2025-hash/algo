@@ -1,0 +1,41 @@
+import unittest
+from kmp_matcher import compute_lps_array, kmp_search_static_array
+
+class TestKmpSearch(unittest.TestCase):
+
+    def test_lps_array_generation(self):
+        self.assertEqual(compute_lps_array("тест"), [0, 0, 0, 0])
+        self.assertEqual(compute_lps_array("AAAA"), [0, 1, 2, 3])
+        self.assertEqual(compute_lps_array("ABCAB"), [0, 0, 0, 1, 2])
+
+    def test_single_match(self):
+        text = "Привіт, це тестовий рядок для перевірки."
+        pattern = "тест"
+        self.assertEqual(kmp_search_static_array(text, pattern), [12])
+
+    def test_multiple_matches(self):
+        text = "один тест, два тест, три тест!"
+        pattern = "тест"
+        self.assertEqual(kmp_search_static_array(text, pattern), [5, 15, 25])
+
+    def test_no_match(self):
+        text = "Тут немає потрібного слова."
+        pattern = "тест"
+        self.assertEqual(kmp_search_static_array(text, pattern), [])
+
+    def test_empty_inputs(self):
+        self.assertEqual(kmp_search_static_array("Якийсь текст", ""), [])
+        self.assertEqual(kmp_search_static_array("", "тест"), [])
+
+    def test_overlapping_repeats(self):
+        text = "AAAAA"
+        pattern = "AAA"
+        self.assertEqual(kmp_search_static_array(text, pattern), [0, 1, 2])
+
+    def test_case_sensitivity(self):
+        text = "Тест і тест"
+        pattern = "тест"
+        self.assertEqual(kmp_search_static_array(text, pattern), [7])
+
+if __name__ == "__main__":
+    unittest.main()
